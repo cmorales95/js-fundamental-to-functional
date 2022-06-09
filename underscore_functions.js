@@ -115,16 +115,25 @@ const newDevelopment = [{
 }];
 
 
-var notInRooms = _.reduce(newDevelopment, (suspect, memo) => {
-  var result = [];
-  for (let room of suspect.rooms) {
-    const key = Object.keys(room)[0];
-    const value = Object.values(room)[0];
-    if (!value) {
-      (memo[key] || (memo[key] = [])).push(suspect.name);
+const notInRooms = _.reduce(newDevelopment, (suspect, memo) => {
+  const emptyRooms = _.filter(suspect.rooms, room => {
+    return !Object.values(room)[0];
+  });
+
+  const keysEmptyRoom = _.map(emptyRooms, room => {
+    return Object.keys(room)[0];
+  });
+
+  _.each(keysEmptyRoom, room => {
+    for (let value of memo) {
+      if (value === room) {
+        return;
+      }
     }
-  }
+    memo.push(room);
+  });
+
   return memo;
-}, {});
+}, []);
 console.log(notInRooms);
 
